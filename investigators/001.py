@@ -23,8 +23,11 @@ try:
         )
     )
 
-    print(f"{datetime.now()} : {cycle_elem.text}")
+    post_date = driver.find_element_by_xpath("//*[@id='dnn_ctr436_OperAvailable_TSP1_DataGrid1']/tbody/tr[2]/td[3]")
+    post_time = driver.find_element_by_xpath("//*[@id='dnn_ctr436_OperAvailable_TSP1_DataGrid1']/tbody/tr[2]/td[4]")
+
+    print(f"{datetime.now()},{cycle_elem.text},{post_date.text} {post_time.text}")
 except Exception as e:
-    print(f"{datetime.now()} : {str(e)}")
+    print(f"{datetime.now()},{str(e)},0")
 finally:
     driver.close()
