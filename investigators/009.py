@@ -17,6 +17,16 @@ try:
     driver.get(url="https://peplmessenger.energytransfer.com/ipost/PEPL/capacity/operationally-available-by-location")
 
     wait = WebDriverWait(driver, 10)
+    date_elem = wait.until(
+        ec.visibility_of_element_located(
+            (By.XPATH, "//*[@id='gasDay']")
+        )
+    )
+    date_elem.clear()
+    date_elem.send_keys(now.strftime('%m/%d/%Y'))
+
+    driver.find_element_by_xpath("/html/body/div/div/article/section/form/button").click()
+
     cycle_elem = wait.until(
         ec.visibility_of_element_located(
             (By.XPATH, "//*[@id='cycleDesc']")
