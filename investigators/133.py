@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 from selenium import webdriver
@@ -9,6 +10,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 options = Options()
 options.headless = True
 driver = webdriver.Firefox(options=options)
+
+now = datetime.now()
 
 try:
     driver.get(url="https://transmission.wbienergy.com/informational_postings/capacity/operational_capacity_locations.aspx")
@@ -23,8 +26,14 @@ try:
         )
     )
 
-    print(f"{datetime.now()} : {cycle_elem.text}")
+    post_datetime_elem = driver.find_element_by_xpath("//*[@id='lblPostDate']")
+    post_datetime = post_datetime_elem.text
+
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    driver.get_screenshot_as_file(f'{dir_path}/../133_screens/screen:{now}.png')
+
+    print(f"{now},{cycle_elem.text},{post_datetime}")
 except Exception as e:
-    print(f"{datetime.now()} : {str(e)}")
+    print(f"{now},{str(e)}")
 finally:
     driver.close()
