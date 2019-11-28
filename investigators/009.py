@@ -2,7 +2,10 @@ import os
 from datetime import datetime
 
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
 
 options = Options()
 options.headless = True
@@ -13,7 +16,12 @@ now = datetime.now()
 try:
     driver.get(url="https://peplmessenger.energytransfer.com/ipost/PEPL/capacity/operationally-available-by-location")
 
-    cycle_elem = driver.find_element_by_xpath("//*[@id='cycleDesc']")
+    wait = WebDriverWait(driver, 10)
+    cycle_elem = wait.until(
+        ec.visibility_of_element_located(
+            (By.XPATH, "//*[@id='cycleDesc']")
+        )
+    )
     cycle = cycle_elem.get_attribute('value')
 
     post_datetime_elem = driver.find_element_by_xpath("//*[@id='wrapper-main']/div/article/section/p[2]")
