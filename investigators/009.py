@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -26,6 +27,7 @@ try:
     date_elem.send_keys(now.strftime('%m/%d/%Y'))
 
     driver.find_element_by_xpath("/html/body/div/div/article/section/form/button").click()
+    time.sleep(3)
 
     cycle_elem = wait.until(
         ec.visibility_of_element_located(

@@ -1,14 +1,49 @@
+import os
 from datetime import datetime
-from lxml import html
+import time
 
-import requests
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import WebDriverWait
+
+options = Options()
+options.headless = True
+driver = webdriver.Firefox(options=options)
+
+now = datetime.now()
 
 try:
-    r = requests.get("https://tgcmessenger.energytransfer.com/ipost/TGC/capacity/operationally-available-by-location")
+    driver.get(url="https://tgcmessenger.energytransfer.com/ipost/TGC/capacity/operationally-available-by-location")
 
-    html_tree = html.fromstring(r.content)
-    cycle = html_tree.xpath("//*[@id='cycleDesc']/@value")
+    wait = WebDriverWait(driver, 10)
+    date_elem = wait.until(
+        ec.visibility_of_element_located(
+            (By.XPATH, "//*[@id='gasDay']")
+        )
+    )
+    date_elem.clear()
+    date_elem.send_keys(now.strftime('%m/%d/%Y'))
 
-    print(f"{datetime.now()} : {cycle[0]}")
+    driver.find_element_by_xpath("/html/body/div/div/article/section/form/button").click()
+    time.sleep(3)
+
+    cycle_elem = wait.until(
+        ec.visibility_of_element_located(
+            (By.XPATH, "//*[@id='cycleDesc']")
+        )
+    )
+    cycle = cycle_elem.get_attribute('value')
+
+    post_datetime_elem = driver.find_element_by_xpath("//*[@id='wrapper-main']/div/article/section/p[2]")
+    post_datetime = post_datetime_elem.text
+
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    driver.get_screenshot_as_file(f'{dir_path}/../018_screens/screen:{now}.png')
+
+    print(f"{now},{cycle},{post_datetime}")
 except Exception as e:
-    print(f"{datetime.now()} : {str(e)}")
+    print(f"{now},{str(e)},0")
+finally:
+    driver.close()
